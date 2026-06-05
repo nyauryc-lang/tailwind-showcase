@@ -340,6 +340,88 @@
         }
         setInterval(draw, 55);
       })();
+
+      function describeTailwindClass(name) {
+        if (!name) return "Clase vacía";
+        if (name.startsWith("bg-")) {
+          if (name.includes("/")) return "Aplica fondo con color y opacidad en la paleta del tema.";
+          if (name.startsWith("bg-gradient")) return "Aplica un fondo degradado configurable.";
+          return "Aplica un color de fondo desde la paleta de Tailwind o tema.";
+        }
+        if (name.startsWith("text-")) {
+          if (name === "text-xs" || name === "text-sm" || name === "text-lg" || name === "text-3xl" || name === "text-4xl" || name === "text-5xl" || name === "text-6xl" || name === "text-7xl") {
+            return "Define el tamaño del texto.";
+          }
+          if (name.includes("-foreground") || name.includes("-muted") || name.includes("-primary") || name.includes("-secondary") || name.includes("-neon") || name.includes("-coral") || name.includes("-cyan")) {
+            return "Aplica un color de texto temático o utilitario.";
+          }
+          return "Aplica un color de texto desde la paleta de Tailwind o tema.";
+        }
+        if (name.startsWith("border-")) {
+          if (name.includes("/")) return "Define el color del borde con opacidad.";
+          return "Define el color o el estilo del borde.";
+        }
+        if (name === "border" || name === "border-b" || name === "border-t" || name === "border-y" || name === "border-x") {
+          return "Activa un borde en el eje o lado indicado.";
+        }
+        if (name.startsWith("rounded-")) return "Aplica radio de borde para esquinas redondeadas.";
+        if (name.startsWith("px-") || name.startsWith("py-") || name.startsWith("pt-") || name.startsWith("pb-") || name.startsWith("pl-") || name.startsWith("pr-")) return "Agrega relleno (padding) en el eje o lado indicado.";
+        if (name.startsWith("mx-") || name.startsWith("my-") || name.startsWith("mt-") || name.startsWith("mb-") || name.startsWith("ml-") || name.startsWith("mr-")) return "Agrega margen en el eje o lado indicado.";
+        if (name.startsWith("gap-")) return "Controla el espacio entre elementos en un contenedor flex o grid.";
+        if (name.startsWith("grid-cols-")) return "Define el número de columnas de una cuadrícula.";
+        if (name.startsWith("max-w-")) return "Limita el ancho máximo del elemento.";
+        if (name.startsWith("min-h-")) return "Define la altura mínima del elemento.";
+        if (name === "flex" || name === "grid" || name === "inline-flex" || name === "inline-grid" || name === "block" || name === "inline-block" || name === "hidden") {
+          return "Controla la propiedad de visualización del elemento.";
+        }
+        if (name === "items-center" || name === "items-end" || name === "justify-between" || name === "justify-center") {
+          return "Alinea el contenido dentro de un contenedor flex o grid.";
+        }
+        if (name === "uppercase") return "Convierte el texto a mayúsculas.";
+        if (name === "tracking-widest") return "Aumenta el espaciado entre letras.";
+        if (name === "leading-relaxed" || name === "leading-tight" || name.startsWith("leading-")) return "Ajusta el interlineado del texto.";
+        if (name === "font-bold" || name === "font-black" || name === "font-medium") return "Aplica el peso de fuente correspondiente.";
+        if (name.startsWith("font-")) return "Aplica una familia de fuente personalizada o de tema.";
+        if (name.startsWith("text-")) return "Controla el color o tamaño del texto.";
+        if (name.startsWith("h-") || name.startsWith("w-") || name === "h-full" || name === "w-full") return "Define dimensiones de altura o ancho.";
+        if (name.startsWith("p-") || name.startsWith("m-")) return "Agrega padding o margin de forma abreviada.";
+        if (name.startsWith("shadow")) return "Aplica una sombra a la caja del elemento.";
+        if (name.startsWith("hover:") || name.startsWith("focus:") || name.startsWith("group-hover:")) return "Define estilos condicionales en estado hover/focus/grupo.";
+        if (name.startsWith("animate-")) return "Aplica una animación CSS predefinida.";
+        if (name === "relative" || name === "absolute") return "Define la posición del elemento dentro del flujo del documento.";
+        if (name === "inset-0") return "Estira el elemento a los 4 lados dentro de su contenedor posicionado.";
+        if (name === "overflow-x-auto" || name === "overflow-y-auto" || name === "overflow-hidden") return "Controla el comportamiento del desbordamiento en el eje indicado.";
+        if (name === "whitespace-pre-wrap") return "Mantiene saltos de línea y ajusta el texto al ancho disponible.";
+        if (name === "tracking-tight") return "Reduce el espaciado entre letras.";
+        if (name === "font-mono") return "Aplica la familia de fuente monoespaciada.";
+        if (name === "font-sans") return "Aplica la familia de fuente sans-serif.";
+        if (name === "font-display") return "Aplica una familia de fuente de visualización personalizada.";
+        if (name.endsWith("/80") || name.endsWith("/90") || name.endsWith("/40") || name.endsWith("/15") || name.endsWith("/10")) return "Aplica una opacidad al color o fondo especificado.";
+        if (name.startsWith("text-") && name.includes("-")) return "Aplica un estilo de texto, color o tamaño específico.";
+        if (name.includes("-")) return "Aplicación de utilidad de Tailwind o clase personalizada basada en el sufijo.";
+        return "Clase de Tailwind o tema con comportamiento utilitario.";
+      }
+
+      (function addTailwindDescriptions() {
+        const table = document.getElementById('tailwind-inventory');
+        if (!table) return;
+        const headerRow = table.querySelector('thead tr');
+        if (!headerRow) return;
+        if (!headerRow.querySelector('th:last-child') || headerRow.querySelectorAll('th').length === 3) {
+          const th = document.createElement('th');
+          th.className = 'text-left px-4 py-3';
+          th.textContent = 'Descripción';
+          headerRow.appendChild(th);
+        }
+        table.querySelectorAll('tbody tr').forEach((row) => {
+          if (row.querySelectorAll('td').length === 4) return;
+          const className = row.querySelector('td')?.textContent.trim() || '';
+          const td = document.createElement('td');
+          td.className = 'px-3 py-2 text-muted text-xs';
+          td.textContent = describeTailwindClass(className);
+          row.appendChild(td);
+        });
+      })();
     </script>
     <!-- TAILWIND CLASSES INVENTORY -->
     <section class="border-t border-border/80 bg-panel/40">
@@ -350,12 +432,13 @@
           <p class="text-muted mt-2 text-sm">276 clases únicas encontradas en index.html, src/routes/index.tsx y src/styles.css</p>
         </div>
         <div class="overflow-x-auto rounded-xl border border-border" style="max-height: 70vh; overflow-y: auto;">
-          <table class="w-full text-sm">
+          <table id="tailwind-inventory" class="w-full text-sm">
             <thead class="bg-black/40 text-muted text-xs uppercase tracking-wider sticky top-0">
               <tr>
                 <th class="text-left px-4 py-3">Clase</th>
                 <th class="text-center px-4 py-3">Ocurrencias</th>
                 <th class="text-left px-4 py-3">Ubicaciones</th>
+                <th class="text-left px-4 py-3">Descripción</th>
               </tr>
             </thead>
             <tbody class="divide-y divide-border/60 font-mono">
