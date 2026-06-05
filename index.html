@@ -402,12 +402,12 @@
         return "Clase de Tailwind o tema con comportamiento utilitario.";
       }
 
-      (function addTailwindDescriptions() {
+      function addTailwindDescriptions() {
         const table = document.getElementById('tailwind-inventory');
         if (!table) return;
         const headerRow = table.querySelector('thead tr');
         if (!headerRow) return;
-        if (!headerRow.querySelector('th:last-child') || headerRow.querySelectorAll('th').length === 3) {
+        if (headerRow.querySelectorAll('th').length === 3) {
           const th = document.createElement('th');
           th.className = 'text-left px-4 py-3';
           th.textContent = 'Descripción';
@@ -417,11 +417,13 @@
           if (row.querySelectorAll('td').length === 4) return;
           const className = row.querySelector('td')?.textContent.trim() || '';
           const td = document.createElement('td');
-          td.className = 'px-3 py-2 text-muted text-xs';
+          td.className = 'px-3 py-2 text-muted text-xs break-words whitespace-normal';
           td.textContent = describeTailwindClass(className);
           row.appendChild(td);
         });
-      })();
+      }
+
+      document.addEventListener('DOMContentLoaded', addTailwindDescriptions);
     </script>
     <!-- TAILWIND CLASSES INVENTORY -->
     <section class="border-t border-border/80 bg-panel/40">
